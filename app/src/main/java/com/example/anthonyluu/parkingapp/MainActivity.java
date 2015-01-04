@@ -18,9 +18,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 
 public class MainActivity extends ActionBarActivity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+
+    static final LatLng HAMBURG = new LatLng(53.558, 9.927);
+    static final LatLng KIEL = new LatLng(53.551, 9.993);
+    private GoogleMap map;
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -45,6 +55,21 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+
+        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
+                .getMap();
+
+        if (map!=null){
+            map.addMarker(new MarkerOptions().position(HAMBURG)
+                    .title("Hamburg"));
+            map.addMarker(new MarkerOptions()
+                    .position(KIEL)
+                    .title("Kiel")
+                    .snippet("Kiel is cool")
+                    .icon(BitmapDescriptorFactory
+                            .fromResource(R.drawable.ic_launcher)));
+        }
     }
 
     @Override
