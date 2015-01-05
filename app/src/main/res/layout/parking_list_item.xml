@@ -1,14 +1,23 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_width="fill_parent"
+    android:layout_height="100sp" >
+    <RelativeLayout
+        android:layout_width="120sp"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/tvDistance"
+            android:layout_width="60sp"
+            android:layout_height="50sp" />
+        <TextView
+            android:id="@+id/tvCost"
+            android:layout_width="60sp"
+            android:layout_height="50sp"
+            android:layout_below="@+id/tvDistance" />
+
+    </RelativeLayout>
+
     <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name" />
-    <TextView
-        android:id="@+id/tvHome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="HomeTown" />
+        android:id="@+id/tvIntersection"
+        android:layout_width="120sp"
+        android:layout_height="match_parent" />
 </LinearLayout>

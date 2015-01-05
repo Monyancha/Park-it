@@ -25,9 +25,9 @@ public class ParkingListActivity extends Activity {
         setContentView(R.layout.activity_parking_list);
 
         ArrayList vals = new ArrayList<String>();
-        vals.add("Android");
-        vals.add("Iphone");
-        vals.add("SomeOtherPhone");
+        vals.add("5km");
+        vals.add("10km");
+        vals.add("100km");
 
         ParkingListArrayAdapter parkingListArrayAdapter = new ParkingListArrayAdapter(this, vals);
 
@@ -74,11 +74,13 @@ public class ParkingListActivity extends Activity {
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.parking_list_item, parent, false);
             }
             // Lookup view for data population
-            TextView tvName = (TextView) convertView.findViewById(R.id.tvName);
-            TextView tvHome = (TextView) convertView.findViewById(R.id.tvHome);
+            TextView tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
+            TextView tvCost = (TextView) convertView.findViewById(R.id.tvCost);
+            TextView tvIntersection = (TextView) convertView.findViewById(R.id.tvIntersection);
             // Populate the data into the template view using the data object
-            tvName.setText(items.get(position));
-            tvHome.setText(items.get(position));
+            tvDistance.setText(items.get(position));
+            tvCost.setText("$5");
+            tvIntersection.setText("some intersection");
 
             // Return the completed view to render on screen
             return convertView;
