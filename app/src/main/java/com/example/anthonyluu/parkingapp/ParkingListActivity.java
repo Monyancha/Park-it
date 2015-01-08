@@ -2,6 +2,7 @@ package com.example.anthonyluu.parkingapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +14,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,9 +95,65 @@ public class ParkingListActivity extends Activity {
             tvDistance.setText(items.get(position));
             tvCost.setText("$5");
             tvIntersection.setText("some intersection");
+            String url = "http://www1.toronto.ca/City_Of_Toronto/Information_&_Technology/Open_Data/Data_Sets/Assets/Files/greenPParking.json";
+            new GetParkingDataTask().execute(url);
 
             // Return the completed view to render on screen
             return convertView;
         }
     }
+
+    private class GetParkingDataTask extends AsyncTask<String, Void, String> {
+        protected String doInBackground(String... urls) {
+
+
+            String responseString = getHttpRequest(urls[0]);
+            Log.i("ResponseString", responseString);
+            return responseString;
+        }
+
+        // Should use this to add a spinner of some sort
+//        protected void onProgressUpdate(Integer... progress) {
+//            setProgressPercent(progress[0]);
+//        }
+
+        protected void onPostExecute(Long result) {
+        }
+
+        private String getHttpRequest(String url) {
+            StringBuilder sBuilder = new StringBuilder();
+            HttpClient client = new DefaultHttpClient();
+
+            HttpGet getRequest = new HttpGet(url);
+            HttpResponse response;
+            try {
+                response = client.execute(getRequest);
+                StatusLine statusLine = response.getStatusLine();
+                int statusCode = statusLine.getStatusCode();
+                if(statusCode == 200) {
+                    HttpEntity entity = response.getEntity();
+                    // Starting to create InputStream to read data and append to String Builder
+                    InputStream is = entity.getContent();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    // checking to see if line is empty
+                    while((line = reader.readLine()) != null) {
+                        sBuilder.append(line);
+                    }
+                }
+                else {
+                    Log.e("HttpGetError", "failed to GET information from " + url);
+                }
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return sBuilder.toString();
+        }
+    }
+
+
+
+
 }
