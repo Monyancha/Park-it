@@ -13,9 +13,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -157,7 +159,7 @@ public class ParkingListActivity extends Activity {
 //        }
 
         protected void onPostExecute(String result) {
-            ListView listView = (ListView) findViewById(R.id.list);
+            final ListView listView = (ListView) findViewById(R.id.list);
             ArrayList vals = new ArrayList<JSONObject>();
 //            vals.add("5km");
 //            vals.add("10km");
@@ -180,6 +182,28 @@ public class ParkingListActivity extends Activity {
 
             parkingListArrayAdapter = new ParkingListArrayAdapter(ctx, vals);
             listView.setAdapter(parkingListArrayAdapter);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1,
+                                        int position, long arg3) {
+                    int itemPosition = position;
+
+                    // ListView Clicked item value
+                    JSONObject jsonObj = (JSONObject) listView.getItemAtPosition(position);
+
+                    // Show Alert
+                    try {
+                        Toast.makeText(getApplicationContext(),
+                                "Position :" + itemPosition + "  ListItem : " + jsonObj.get("address").toString(), Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                    catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
         }
 
