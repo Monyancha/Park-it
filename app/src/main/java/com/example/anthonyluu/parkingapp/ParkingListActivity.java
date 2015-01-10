@@ -2,6 +2,9 @@ package com.example.anthonyluu.parkingapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,24 +35,57 @@ import java.util.List;
 
 
 public class ParkingListActivity extends Activity {
+    Context ctx;
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.i("LocationStatus", "Location Changed: " + location.toString());
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.i("LocationStatus", "Status Changed: " + status);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.i("LocationStatus", "Provider enabled ");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.i("LocationStatus", "Provider disabled ");
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_parking_list);
+        ctx = this;
 
-        ArrayList vals = new ArrayList<String>();
-        vals.add("5km");
-        vals.add("10km");
-        vals.add("100km");
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        ParkingListArrayAdapter parkingListArrayAdapter = new ParkingListArrayAdapter(this, vals);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 500.0f, mLocationListener);
 
-        ListView listView = (ListView) findViewById(R.id.list);
-        listView.setAdapter(parkingListArrayAdapter);
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-//        TextView textView = (TextView) findViewById(R.id.label);
-//        textView.setText("THIS IS A TEXTVIEW TEST");
+        double latitude = location.getLatitude();
+        double longitude = location.getLongitude();
+
+        Log.i("Latitude: ", "Latitude of " + latitude);
+        Log.i("Longitude: ", "Longitude of " +longitude);
+
+        String url = "http://www1.toronto.ca/City_Of_Toronto/Information_&_Technology/Open_Data/Data_Sets/Assets/Files/greenPParking.json";
+
+        GetParkingDataTask task = new GetParkingDataTask();
+        task.execute(url);
+
+//        ParkingListArrayAdapter parkingListArrayAdapter = new ParkingListArrayAdapter(this, vals);
+
+
     }
 
 
@@ -62,12 +98,8 @@ public class ParkingListActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -95,8 +127,6 @@ public class ParkingListActivity extends Activity {
             tvDistance.setText(items.get(position));
             tvCost.setText("$5");
             tvIntersection.setText("some intersection");
-            String url = "http://www1.toronto.ca/City_Of_Toronto/Information_&_Technology/Open_Data/Data_Sets/Assets/Files/greenPParking.json";
-            new GetParkingDataTask().execute(url);
 
             // Return the completed view to render on screen
             return convertView;
@@ -104,11 +134,15 @@ public class ParkingListActivity extends Activity {
     }
 
     private class GetParkingDataTask extends AsyncTask<String, Void, String> {
+        private String[] responses;
+        ParkingListArrayAdapter parkingListArrayAdapter;
         protected String doInBackground(String... urls) {
 
 
             String responseString = getHttpRequest(urls[0]);
-            Log.i("ResponseString", responseString);
+            responses = new String[2];
+            responses[0] = "test";
+            responses[1] = "test";
             return responseString;
         }
 
@@ -117,7 +151,22 @@ public class ParkingListActivity extends Activity {
 //            setProgressPercent(progress[0]);
 //        }
 
-        protected void onPostExecute(Long result) {
+        public String[] getResponses() {
+            return responses;
+        }
+
+        protected void onPostExecute(String result) {
+            ListView listView = (ListView) findViewById(R.id.list);
+            ArrayList vals = new ArrayList<String>();
+            vals.add("5km");
+            vals.add("10km");
+            vals.add("100km");
+
+            Log.i("PostExecuteResult", result);
+
+            parkingListArrayAdapter = new ParkingListArrayAdapter(ctx, vals);
+            listView.setAdapter(parkingListArrayAdapter);
+
         }
 
         private String getHttpRequest(String url) {
