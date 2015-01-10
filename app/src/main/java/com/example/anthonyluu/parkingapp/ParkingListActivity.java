@@ -23,8 +23,10 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,9 +85,6 @@ public class ParkingListActivity extends Activity {
         GetParkingDataTask task = new GetParkingDataTask();
         task.execute(url);
 
-//        ParkingListArrayAdapter parkingListArrayAdapter = new ParkingListArrayAdapter(this, vals);
-
-
     }
 
 
@@ -107,9 +106,9 @@ public class ParkingListActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class ParkingListArrayAdapter extends ArrayAdapter<String> {
-        private List<String> items;
-        public ParkingListArrayAdapter(Context context, ArrayList<String> items) {
+    public class ParkingListArrayAdapter extends ArrayAdapter<JSONObject> {
+        private List<JSONObject> items;
+        public ParkingListArrayAdapter(Context context, ArrayList<JSONObject> items) {
             super(context, 0, items);
             this.items = items;
         }
@@ -124,9 +123,15 @@ public class ParkingListActivity extends Activity {
             TextView tvCost = (TextView) convertView.findViewById(R.id.tvCost);
             TextView tvIntersection = (TextView) convertView.findViewById(R.id.tvIntersection);
             // Populate the data into the template view using the data object
-            tvDistance.setText(items.get(position));
-            tvCost.setText("$5");
-            tvIntersection.setText("some intersection");
+
+            try {
+                tvDistance.setText(items.get(position).getString("id"));
+                tvCost.setText(items.get(position).getString("rate"));
+                tvIntersection.setText(items.get(position).getString("address"));
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             // Return the completed view to render on screen
             return convertView;
@@ -151,24 +156,34 @@ public class ParkingListActivity extends Activity {
 //            setProgressPercent(progress[0]);
 //        }
 
-        public String[] getResponses() {
-            return responses;
-        }
-
         protected void onPostExecute(String result) {
             ListView listView = (ListView) findViewById(R.id.list);
-            ArrayList vals = new ArrayList<String>();
-            vals.add("5km");
-            vals.add("10km");
-            vals.add("100km");
+            ArrayList vals = new ArrayList<JSONObject>();
+//            vals.add("5km");
+//            vals.add("10km");
+//            vals.add("100km");
 
-            Log.i("PostExecuteResult", result);
+            JSONObject jsonObject;
+            try {
+                jsonObject = new JSONObject(result);
+                JSONArray carParks = jsonObject.getJSONArray("carparks");
+                for(int i = 0; i < carParks.length(); i ++) {
+                    vals.add(carParks.get(i));
+                }
+
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            Log.i("vals at 0: ", vals.get(0).toString());
 
             parkingListArrayAdapter = new ParkingListArrayAdapter(ctx, vals);
             listView.setAdapter(parkingListArrayAdapter);
 
         }
 
+        // method to send HTTP GET request and return as a string
         private String getHttpRequest(String url) {
             StringBuilder sBuilder = new StringBuilder();
             HttpClient client = new DefaultHttpClient();
@@ -200,7 +215,16 @@ public class ParkingListActivity extends Activity {
             }
             return sBuilder.toString();
         }
+
     }
+
+//    public static void longInfo(String tag, String str) {
+//        if(str.length() > 4000) {
+//            Log.i(tag, str.substring(0, 4000));
+//            longInfo(tag, str.substring(4000));
+//        } else
+//            Log.i(tag, str);
+//    }
 
 
 
