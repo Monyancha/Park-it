@@ -2,6 +2,7 @@ package com.example.anthonyluu.parkingapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -18,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -193,11 +196,24 @@ public class ParkingListActivity extends Activity {
                     // ListView Clicked item value
                     JSONObject jsonObj = (JSONObject) listView.getItemAtPosition(position);
 
-                    // Show Alert
+                    // Send Intent with ParkingItem Parcelable object
                     try {
-                        Toast.makeText(getApplicationContext(),
-                                "Position :" + itemPosition + "  ListItem : " + jsonObj.get("address").toString(), Toast.LENGTH_SHORT)
-                                .show();
+//                        Toast.makeText(getApplicationContext(),
+//                                "Position :" + itemPosition + "  ListItem : " + jsonObj.get("address").toString(), Toast.LENGTH_SHORT)
+//                                .show();
+
+                        LatLng latLng = new LatLng(jsonObj.getDouble("lat"), jsonObj.getDouble("lng"));
+
+                        Intent intent = new Intent(ctx, MainActivity.class);
+                        intent.putExtra("EXTRA_PARKING_ITEM", new ParkingItem(
+                                jsonObj.getInt("id"),
+                                jsonObj.getString("address"),
+                                jsonObj.getString("rate"),
+                                jsonObj.getDouble("lat"),
+                                jsonObj.getDouble("lng")
+
+                        ));
+                        startActivity(intent);
                     }
                     catch (JSONException e) {
                         e.printStackTrace();
