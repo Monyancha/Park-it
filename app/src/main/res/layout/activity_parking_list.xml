@@ -1,22 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.example.anthonyluu.parkingapp.ParkingListActivity">
+    android:layout_height="match_parent"
+    tools:context="com.example.anthonyluu.parkingapp.ParkingListActivity"
+    android:orientation="vertical">
 
     <!--<TextView android:text="@string/hello_world" android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content" />-->
 
+    <TextView
+        android:layout_width="572dp"
+        android:layout_height="74dp"
+        android:background="#ff4caf50"
+        android:id="@+id/topbar"
+        android:text="@string/app_name"
+        android:textSize="24dp"
+        android:textIsSelectable="false"
+        android:textColor="#ffffffff"
+        android:paddingLeft="30sp"
+        android:paddingTop="20sp" />
+
 
     <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:id="@+id/list"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:divider="@null"
-        android:dividerHeight="0dp"/>
+        android:divider="@android:drawable/divider_horizontal_bright"
+        android:dividerHeight="2dp"/>
 
 </LinearLayout>

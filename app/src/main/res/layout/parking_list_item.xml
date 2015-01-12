@@ -1,16 +1,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="100sp" >
+    android:layout_height="100sp"
+    android:weightSum="1">
+    <ImageView
+        android:id="@+id/tvLocationIcon"
+        android:layout_width="50sp"
+        android:layout_height="match_parent"
+        android:src="@drawable/ic_location_on_black_48dp"
+        android:paddingLeft="10sp"
+        android:paddingRight="10sp" />
     <RelativeLayout
-        android:layout_width="120sp"
+        android:layout_width="60dp"
         android:layout_height="match_parent">
         <TextView
             android:id="@+id/tvDistance"
-            android:layout_width="60sp"
+            android:layout_width="match_parent"
             android:layout_height="50sp" />
         <TextView
             android:id="@+id/tvCost"
-            android:layout_width="60sp"
+            android:layout_width="match_parent"
             android:layout_height="50sp"
             android:layout_below="@+id/tvDistance" />
 
@@ -18,6 +26,7 @@
 
     <TextView
         android:id="@+id/tvIntersection"
-        android:layout_width="120sp"
-        android:layout_height="match_parent" />
+        android:layout_width="218dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
 </LinearLayout>

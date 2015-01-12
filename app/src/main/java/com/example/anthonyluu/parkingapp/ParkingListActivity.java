@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -75,15 +74,19 @@ public class ParkingListActivity extends Activity {
 
         LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000L, 500.0f, mLocationListener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 500.0f, mLocationListener);
 
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        if (location != null) {
+            double latitude = location.getLatitude();
+            double longitude = location.getLongitude();
 
-        Log.i("Latitude: ", "Latitude of " + latitude);
-        Log.i("Longitude: ", "Longitude of " +longitude);
+            Log.i("Latitude: ", "Latitude of " + latitude);
+            Log.i("Longitude: ", "Longitude of " +longitude);
+        }
+
+
 
         String url = "http://www1.toronto.ca/City_Of_Toronto/Information_&_Technology/Open_Data/Data_Sets/Assets/Files/greenPParking.json";
 

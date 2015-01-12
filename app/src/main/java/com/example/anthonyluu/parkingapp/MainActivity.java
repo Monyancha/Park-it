@@ -1,6 +1,9 @@
 package com.example.anthonyluu.parkingapp;
 
 import android.app.Activity;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,27 +20,59 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 
 public class MainActivity extends Activity {
 
-    private LatLng parkingLatLng;
-    private GoogleMap map;
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.i("LocationStatus", "Location Changed: " + location.toString());
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            Log.i("LocationStatus", "Status Changed: " + status);
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            Log.i("LocationStatus", "Provider enabled ");
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            Log.i("LocationStatus", "Provider disabled ");
+        }
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LatLng myLocationLatLng;
+        LatLng parkingLatLng;
+        GoogleMap map;
+
         setContentView(R.layout.activity_main);
 
+        // getting my current location
+        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 500.0f, mLocationListener);
+        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        double myLatitude = location.getLatitude();
+        double myLongitude = location.getLongitude();
+        myLocationLatLng = new LatLng(myLatitude, myLongitude);
+
+        // getting Parcelable from intent extras
+        // the ParkingItem is stored in Parcelable with all the necessary fields
         Bundle data = getIntent().getExtras();
         ParkingItem parkingItem = data.getParcelable("EXTRA_PARKING_ITEM");
         Double lat = parkingItem.getLat();
         Double lng = parkingItem.getLng();
         parkingLatLng = new LatLng(lat, lng);
-
-        Log.i("ParkingItem id", String.valueOf(parkingItem.getId()));
-
 
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
@@ -45,12 +80,9 @@ public class MainActivity extends Activity {
         if (map!=null){
             map.addMarker(new MarkerOptions().position(parkingLatLng)
                     .title("Parking"));
-//            map.addMarker(new MarkerOptions()
-//                    .position(KIEL)
-//                    .title("Kiel")
-//                    .snippet("Kiel is cool")
-//                    .icon(BitmapDescriptorFactory
-//                            .fromResource(R.drawable.ic_launcher)));
+
+            map.addMarker(new MarkerOptions().position(myLocationLatLng)
+                    .title("My Location"));
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(parkingLatLng)
@@ -59,6 +91,7 @@ public class MainActivity extends Activity {
                     .tilt(30)
                     .build();
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
         }
     }
 
