@@ -1,0 +1,21 @@
+<!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    tools:context="com.example.anthonyluu.parkingapp.ShowParkingActivity"
+    android:orientation="vertical">
+
+    <fragment
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="437dp"
+        class="com.google.android.gms.maps.MapFragment" />
+
+    <TextView
+        android:id="@+id/mapInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.google.android.gms.maps.MapFragment"
+        android:background="#ff4caf50" />
+
+</LinearLayout>

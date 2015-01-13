@@ -3,12 +3,10 @@ package com.example.anthonyluu.parkingapp;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.android.gms.maps.model.LatLng;
-
 /**
  * Created by anthonyluu on 15-01-11.
  */
-public class ParkingItem implements Parcelable{
+public class ParkingItemParcelable implements Parcelable{
     private Integer id;
     private String address;
     private String rate;
@@ -16,13 +14,13 @@ public class ParkingItem implements Parcelable{
     private Double lng;
     private Double distance;
 
-    public static final Parcelable.Creator<ParkingItem> CREATOR = new Parcelable.Creator<ParkingItem>() {
-        public ParkingItem createFromParcel(Parcel in) {
-            return new ParkingItem(in);
+    public static final Parcelable.Creator<ParkingItemParcelable> CREATOR = new Parcelable.Creator<ParkingItemParcelable>() {
+        public ParkingItemParcelable createFromParcel(Parcel in) {
+            return new ParkingItemParcelable(in);
         }
 
-        public ParkingItem[] newArray(int size) {
-            return new ParkingItem[size];
+        public ParkingItemParcelable[] newArray(int size) {
+            return new ParkingItemParcelable[size];
         }
     };
 
@@ -71,7 +69,11 @@ public class ParkingItem implements Parcelable{
         this.lng = lng;
     }
 
-    public ParkingItem(int id, String address, String rate, Double lat, Double lng, Double distance) {
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public ParkingItemParcelable(int id, String address, String rate, Double lat, Double lng, Double distance) {
         this.id = id;
         this.address = address;
         this.rate = rate;
@@ -81,7 +83,7 @@ public class ParkingItem implements Parcelable{
 
     }
 
-    public ParkingItem(Parcel in) {
+    public ParkingItemParcelable(Parcel in) {
         String[] data = new String[6];
 
         in.readStringArray(data);

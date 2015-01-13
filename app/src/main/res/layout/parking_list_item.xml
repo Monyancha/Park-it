@@ -7,28 +7,33 @@
         android:layout_width="50sp"
         android:layout_height="match_parent"
         android:src="@drawable/ic_location_on_black_48dp"
-        android:paddingLeft="10sp"
-        android:paddingRight="10sp" />
-    <RelativeLayout
+        android:paddingLeft="15sp"
+        android:paddingRight="5sp" />
+    <TextView
+        android:id="@+id/tvDistance"
         android:layout_width="60dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="0.60"
+        android:textStyle="bold"
+        android:gravity="center_vertical|center_horizontal" />
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.46">
         <TextView
-            android:id="@+id/tvDistance"
+            android:id="@+id/tvIntersection"
             android:layout_width="match_parent"
-            android:layout_height="50sp" />
+            android:layout_height="60dp"
+            android:gravity="center_vertical|left" />
         <TextView
             android:id="@+id/tvCost"
             android:layout_width="match_parent"
             android:layout_height="50sp"
-            android:layout_alignParentBottom="true"
+            android:layout_below="@+id/tvIntersection"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            android:gravity="center_vertical|left" />
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvIntersection"
-        android:layout_width="218dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1" />
 </LinearLayout>

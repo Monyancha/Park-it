@@ -9,15 +9,11 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -38,8 +34,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 
 public class ParkingListActivity extends Activity {
@@ -112,48 +106,6 @@ public class ParkingListActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public class ParkingListArrayAdapter extends ArrayAdapter<JSONObject> {
-        private List<JSONObject> items;
-        public ParkingListArrayAdapter(Context context, ArrayList<JSONObject> items) {
-            super(context, 0, items);
-            this.items = items;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.parking_list_item, parent, false);
-            }
-            // Lookup view for data population
-            TextView tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
-            TextView tvCost = (TextView) convertView.findViewById(R.id.tvCost);
-            TextView tvIntersection = (TextView) convertView.findViewById(R.id.tvIntersection);
-            // Populate the data into the template view using the data object
-
-            try {
-                double distanceMeters = items.get(position).getDouble("distance");
-                double distanceKM = distanceMeters/1000;
-                distanceKM = (double) Math.round(distanceKM * 10)/10;
-
-
-
-                tvDistance.setText(String.valueOf(distanceKM)+ " km");
-
-                // if the rate is false, don't display
-                if(items.get(position).get("rate") != false) {
-                    tvCost.setText(items.get(position).getString("rate"));
-                }
-                tvIntersection.setText(items.get(position).getString("address"));
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            // Return the completed view to render on screen
-            return convertView;
-        }
-    }
-
     private class GetParkingDataTask extends AsyncTask<String, Void, String> {
         ParkingListArrayAdapter parkingListArrayAdapter;
         protected String doInBackground(String... urls) {
@@ -206,14 +158,14 @@ public class ParkingListActivity extends Activity {
 
                         LatLng latLng = new LatLng(jsonObj.getDouble("lat"), jsonObj.getDouble("lng"));
 
-                        Intent intent = new Intent(ctx, MainActivity.class);
-                        intent.putExtra("EXTRA_PARKING_ITEM", new ParkingItem(
-                            jsonObj.getInt("id"),
-                            jsonObj.getString("address"),
-                            jsonObj.getString("rate"),
-                            jsonObj.getDouble("lat"),
-                            jsonObj.getDouble("lng"),
-                            jsonObj.getDouble("distance")
+                        Intent intent = new Intent(ctx, ShowParkingActivity.class);
+                        intent.putExtra("EXTRA_PARKING_ITEM", new ParkingItemParcelable(
+                                jsonObj.getInt("id"),
+                                jsonObj.getString("address"),
+                                jsonObj.getString("rate"),
+                                jsonObj.getDouble("lat"),
+                                jsonObj.getDouble("lng"),
+                                jsonObj.getDouble("distance")
 
                         ));
                         startActivity(intent);
@@ -259,28 +211,4 @@ public class ParkingListActivity extends Activity {
         }
 
     }
-    public class ParkingJSONObjComparator implements Comparator<JSONObject> {
-        @Override
-        public int compare(JSONObject lhs, JSONObject rhs) {
-            int ret = -1;
-            try {
-                if(lhs.getDouble("distance") > rhs.getDouble("distance") ) {
-                    ret = 1;
-                }
-
-                if(lhs.getDouble("distance") == rhs.getDouble("distance")) {
-                    ret = 0;
-                }
-
-                if(lhs.getDouble("distance") < rhs.getDouble("distance")) {
-                    ret = -1;
-                }
-            }
-            catch(JSONException e) {
-                e.printStackTrace();
-            }
-            return ret;
-        }
-    }
-
 }
