@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -76,9 +78,7 @@ public class ParkingListActivity extends Activity {
         ctx = this;
 
         mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 500.0f, mLocationListener);
-
         location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if (location != null) {
@@ -136,7 +136,7 @@ public class ParkingListActivity extends Activity {
             // Populate the data into the template view using the data object
 
             try {
-                tvDistance.setText(items.get(position).getString("id"));
+                tvDistance.setText(items.get(position).getString("distance") + " km");
                 tvCost.setText(items.get(position).getString("rate"));
                 tvIntersection.setText(items.get(position).getString("address"));
             }
@@ -167,7 +167,6 @@ public class ParkingListActivity extends Activity {
         protected void onPostExecute(String result) {
             final ListView listView = (ListView) findViewById(R.id.list);
             ArrayList vals = new ArrayList<JSONObject>();
-
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result);
@@ -177,11 +176,11 @@ public class ParkingListActivity extends Activity {
                     destination.setLatitude(carParks.getJSONObject(i).getDouble("lat"));
                     destination.setLongitude(carParks.getJSONObject(i).getDouble("lng"));
                     float distance = location.distanceTo(new Location(destination));
-//                    Log.i("distance from destination: ", String.valueOf(distance));
                     carParks.getJSONObject(i).put("distance", String.valueOf(distance));
                     vals.add(carParks.get(i));
-                    Log.i("car parks distance thing", carParks.getJSONObject(i).getString("distance"));
                 }
+
+                Collections.sort(vals, new ParkingJSONObjComparator());
 
             }
             catch (JSONException e) {
@@ -230,7 +229,6 @@ public class ParkingListActivity extends Activity {
         private String getHttpRequest(String url) {
             StringBuilder sBuilder = new StringBuilder();
             HttpClient client = new DefaultHttpClient();
-
             HttpGet getRequest = new HttpGet(url);
             HttpResponse response;
             try {
@@ -259,6 +257,29 @@ public class ParkingListActivity extends Activity {
             return sBuilder.toString();
         }
 
+    }
+    public class ParkingJSONObjComparator implements Comparator<JSONObject> {
+        @Override
+        public int compare(JSONObject lhs, JSONObject rhs) {
+            int ret = -1;
+            try {
+                if(lhs.getDouble("distance") > rhs.getDouble("distance") ) {
+                    ret = 1;
+                }
+
+                if(lhs.getDouble("distance") == rhs.getDouble("distance")) {
+                    ret = 0;
+                }
+
+                if(lhs.getDouble("distance") < rhs.getDouble("distance")) {
+                    ret = -1;
+                }
+            }
+            catch(JSONException e) {
+                e.printStackTrace();
+            }
+            return ret;
+        }
     }
 
 }

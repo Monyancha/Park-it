@@ -46,6 +46,10 @@ public class ParkingItem implements Parcelable{
         return lng;
     }
 
+    public Double getDistance() {
+        return distance;
+    }
+
     public void setId(int id) {
 
         this.id = id;
