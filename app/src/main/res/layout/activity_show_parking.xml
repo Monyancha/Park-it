@@ -3,19 +3,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent"
     tools:context="com.example.anthonyluu.parkingapp.ShowParkingActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
         android:layout_height="437dp"
-        class="com.google.android.gms.maps.MapFragment" />
-
-    <TextView
-        android:id="@+id/mapInfo"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         class="com.google.android.gms.maps.MapFragment"
-        android:background="#ff4caf50" />
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="100sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        android:background="#ff4caf50">
+
+        <TextView
+            android:id="@+id/tvShowParkingDistance"
+            android:layout_width="150dp"
+            android:layout_height="match_parent"
+            class="com.google.android.gms.maps.MapFragment"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center_vertical|center_horizontal" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvShowCapacity"
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                class="com.google.android.gms.maps.MapFragment"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:gravity="center_vertical|left"
+                android:paddingLeft="10sp"
+                android:paddingRight="10sp" />
+
+            <TextView
+                android:id="@+id/tvShowParkingRate"
+                android:layout_width="match_parent"
+                android:layout_height="50sp"
+                class="com.google.android.gms.maps.MapFragment"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:gravity="left|top"
+                android:paddingLeft="10sp"
+                android:paddingRight="10sp"
+                android:layout_alignParentBottom="true" />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -12,6 +12,7 @@ public class ParkingItemParcelable implements Parcelable{
     private String rate;
     private Double lat;
     private Double lng;
+    private int capacity;
     private Double distance;
 
     public static final Parcelable.Creator<ParkingItemParcelable> CREATOR = new Parcelable.Creator<ParkingItemParcelable>() {
@@ -44,6 +45,10 @@ public class ParkingItemParcelable implements Parcelable{
         return lng;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
     public Double getDistance() {
         return distance;
     }
@@ -69,22 +74,27 @@ public class ParkingItemParcelable implements Parcelable{
         this.lng = lng;
     }
 
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
+    }
+
     public void setDistance(Double distance) {
         this.distance = distance;
     }
 
-    public ParkingItemParcelable(int id, String address, String rate, Double lat, Double lng, Double distance) {
+    public ParkingItemParcelable(int id, String address, String rate, Double lat, Double lng, int capacity, Double distance) {
         this.id = id;
         this.address = address;
         this.rate = rate;
         this.lat = lat;
         this.lng = lng;
+        this.capacity = capacity;
         this.distance = distance;
 
     }
 
     public ParkingItemParcelable(Parcel in) {
-        String[] data = new String[6];
+        String[] data = new String[7];
 
         in.readStringArray(data);
         this.id = Integer.parseInt(data[0]);
@@ -92,7 +102,8 @@ public class ParkingItemParcelable implements Parcelable{
         this.rate = data[2];
         this.lat = Double.parseDouble(data[3]);
         this.lng = Double.parseDouble(data[4]);
-        this.distance = Double.parseDouble(data[5]);
+        this.capacity = Integer.parseInt(data[5]);
+        this.distance = Double.parseDouble(data[6]);
 
     }
 
@@ -107,9 +118,10 @@ public class ParkingItemParcelable implements Parcelable{
                 String.valueOf(this.id),
                 this.address,
                 this.rate,
-                this.lat.toString(),
-                this.lng.toString(),
-                this.distance.toString()
+                String.valueOf(this.lat),
+                String.valueOf(this.lng),
+                String.valueOf(this.capacity),
+                String.valueOf(this.distance)
         });
     }
 }

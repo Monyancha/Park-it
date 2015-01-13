@@ -32,15 +32,12 @@ public class ParkingListArrayAdapter extends ArrayAdapter<JSONObject> {
         TextView tvDistance = (TextView) convertView.findViewById(R.id.tvDistance);
         TextView tvCost = (TextView) convertView.findViewById(R.id.tvCost);
         TextView tvIntersection = (TextView) convertView.findViewById(R.id.tvIntersection);
-        // Populate the data into the template view using the data object
 
+        // Populate the data into the template view using the data object
         try {
             double distanceMeters = items.get(position).getDouble("distance");
             double distanceKM = distanceMeters/1000;
             distanceKM = (double) Math.round(distanceKM * 10)/10;
-
-
-
             tvDistance.setText(String.valueOf(distanceKM)+ " km");
 
             // if the rate is false, don't display

@@ -165,6 +165,7 @@ public class ParkingListActivity extends Activity {
                                 jsonObj.getString("rate"),
                                 jsonObj.getDouble("lat"),
                                 jsonObj.getDouble("lng"),
+                                jsonObj.getInt("capacity"),
                                 jsonObj.getDouble("distance")
 
                         ));

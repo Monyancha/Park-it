@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -88,6 +89,31 @@ public class ShowParkingActivity extends Activity {
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         }
+
+        // modifying textview for the information below the map
+        TextView tvShowParkingDistance = (TextView) this.findViewById(R.id.tvShowParkingDistance);
+        TextView tvShowParkingRate = (TextView) this.findViewById(R.id.tvShowParkingRate);
+        TextView tvShowCapacity = (TextView) this.findViewById(R.id.tvShowCapacity);
+
+        // formats distance into KM and rounds to 1 decimal point.
+        // sets textView
+        double distanceMeters = parkingItemParcelable.getDistance();
+        double distanceKM = distanceMeters/1000;
+        distanceKM = (double) Math.round(distanceKM * 10)/10;
+        tvShowParkingDistance.setText(String.valueOf(distanceKM)+ " km");
+
+        // displays the rate
+        String rate = parkingItemParcelable.getRate();
+        if(rate.indexOf(".") > 0) {
+            tvShowParkingRate.setText(rate);
+        }
+        else {
+            tvShowParkingRate.setText("Unknown rate");
+        }
+
+        // displays the capacity
+        tvShowCapacity.setText("Capacity: " + parkingItemParcelable.getCapacity());
+
     }
 
 }
