@@ -14,6 +14,7 @@ public class ParkingItem implements Parcelable{
     private String rate;
     private Double lat;
     private Double lng;
+    private Double distance;
 
     public static final Parcelable.Creator<ParkingItem> CREATOR = new Parcelable.Creator<ParkingItem>() {
         public ParkingItem createFromParcel(Parcel in) {
@@ -66,18 +67,18 @@ public class ParkingItem implements Parcelable{
         this.lng = lng;
     }
 
-    public ParkingItem(int id, String address, String rate, Double lat, Double lng) {
+    public ParkingItem(int id, String address, String rate, Double lat, Double lng, Double distance) {
         this.id = id;
         this.address = address;
         this.rate = rate;
         this.lat = lat;
-
         this.lng = lng;
+        this.distance = distance;
 
     }
 
     public ParkingItem(Parcel in) {
-        String[] data = new String[5];
+        String[] data = new String[6];
 
         in.readStringArray(data);
         this.id = Integer.parseInt(data[0]);
@@ -85,6 +86,7 @@ public class ParkingItem implements Parcelable{
         this.rate = data[2];
         this.lat = Double.parseDouble(data[3]);
         this.lng = Double.parseDouble(data[4]);
+        this.distance = Double.parseDouble(data[5]);
 
     }
 
@@ -100,7 +102,8 @@ public class ParkingItem implements Parcelable{
                 this.address,
                 this.rate,
                 this.lat.toString(),
-                this.lng.toString()
+                this.lng.toString(),
+                this.distance.toString()
         });
     }
 }

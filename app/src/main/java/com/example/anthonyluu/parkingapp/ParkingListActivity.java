@@ -43,6 +43,9 @@ import java.util.List;
 public class ParkingListActivity extends Activity {
     Context ctx;
 
+    LocationManager mLocationManager;
+    Location location;
+
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
@@ -72,11 +75,11 @@ public class ParkingListActivity extends Activity {
         setContentView(R.layout.activity_parking_list);
         ctx = this;
 
-        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000L, 500.0f, mLocationListener);
 
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
         if (location != null) {
             double latitude = location.getLatitude();
@@ -153,9 +156,6 @@ public class ParkingListActivity extends Activity {
 
 
             String responseString = getHttpRequest(urls[0]);
-            responses = new String[2];
-            responses[0] = "test";
-            responses[1] = "test";
             return responseString;
         }
 
@@ -167,24 +167,26 @@ public class ParkingListActivity extends Activity {
         protected void onPostExecute(String result) {
             final ListView listView = (ListView) findViewById(R.id.list);
             ArrayList vals = new ArrayList<JSONObject>();
-//            vals.add("5km");
-//            vals.add("10km");
-//            vals.add("100km");
 
             JSONObject jsonObject;
             try {
                 jsonObject = new JSONObject(result);
                 JSONArray carParks = jsonObject.getJSONArray("carparks");
                 for(int i = 0; i < carParks.length(); i ++) {
+                    Location destination = new Location("Destination");
+                    destination.setLatitude(carParks.getJSONObject(i).getDouble("lat"));
+                    destination.setLongitude(carParks.getJSONObject(i).getDouble("lng"));
+                    float distance = location.distanceTo(new Location(destination));
+//                    Log.i("distance from destination: ", String.valueOf(distance));
+                    carParks.getJSONObject(i).put("distance", String.valueOf(distance));
                     vals.add(carParks.get(i));
+                    Log.i("car parks distance thing", carParks.getJSONObject(i).getString("distance"));
                 }
 
             }
             catch (JSONException e) {
                 e.printStackTrace();
             }
-
-//            Log.i("vals at 0: ", vals.get(0).toString());
 
             parkingListArrayAdapter = new ParkingListArrayAdapter(ctx, vals);
             listView.setAdapter(parkingListArrayAdapter);
@@ -201,9 +203,6 @@ public class ParkingListActivity extends Activity {
 
                     // Send Intent with ParkingItem Parcelable object
                     try {
-//                        Toast.makeText(getApplicationContext(),
-//                                "Position :" + itemPosition + "  ListItem : " + jsonObj.get("address").toString(), Toast.LENGTH_SHORT)
-//                                .show();
 
                         LatLng latLng = new LatLng(jsonObj.getDouble("lat"), jsonObj.getDouble("lng"));
 
@@ -213,7 +212,8 @@ public class ParkingListActivity extends Activity {
                                 jsonObj.getString("address"),
                                 jsonObj.getString("rate"),
                                 jsonObj.getDouble("lat"),
-                                jsonObj.getDouble("lng")
+                                jsonObj.getDouble("lng"),
+                                jsonObj.getDouble("distance")
 
                         ));
                         startActivity(intent);
@@ -260,16 +260,5 @@ public class ParkingListActivity extends Activity {
         }
 
     }
-
-//    public static void longInfo(String tag, String str) {
-//        if(str.length() > 4000) {
-//            Log.i(tag, str.substring(0, 4000));
-//            longInfo(tag, str.substring(4000));
-//        } else
-//            Log.i(tag, str);
-//    }
-
-
-
 
 }
