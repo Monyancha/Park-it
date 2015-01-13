@@ -70,7 +70,6 @@ public class ParkingListActivity extends Activity {
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,13 +88,9 @@ public class ParkingListActivity extends Activity {
             Log.i("Longitude: ", "Longitude of " +longitude);
         }
 
-
-
         String url = "http://www1.toronto.ca/City_Of_Toronto/Information_&_Technology/Open_Data/Data_Sets/Assets/Files/greenPParking.json";
-
         GetParkingDataTask task = new GetParkingDataTask();
         task.execute(url);
-
     }
 
 
@@ -136,8 +131,18 @@ public class ParkingListActivity extends Activity {
             // Populate the data into the template view using the data object
 
             try {
-                tvDistance.setText(items.get(position).getString("distance") + " km");
-                tvCost.setText(items.get(position).getString("rate"));
+                double distanceMeters = items.get(position).getDouble("distance");
+                double distanceKM = distanceMeters/1000;
+                distanceKM = (double) Math.round(distanceKM * 10)/10;
+
+
+
+                tvDistance.setText(String.valueOf(distanceKM)+ " km");
+
+                // if the rate is false, don't display
+                if(items.get(position).get("rate") != false) {
+                    tvCost.setText(items.get(position).getString("rate"));
+                }
                 tvIntersection.setText(items.get(position).getString("address"));
             }
             catch (JSONException e) {
@@ -150,19 +155,16 @@ public class ParkingListActivity extends Activity {
     }
 
     private class GetParkingDataTask extends AsyncTask<String, Void, String> {
-        private String[] responses;
         ParkingListArrayAdapter parkingListArrayAdapter;
         protected String doInBackground(String... urls) {
-
-
             String responseString = getHttpRequest(urls[0]);
             return responseString;
         }
 
         // Should use this to add a spinner of some sort
-//        protected void onProgressUpdate(Integer... progress) {
-//            setProgressPercent(progress[0]);
-//        }
+        // protected void onProgressUpdate(Integer... progress) {
+        //    setProgressPercent(progress[0]);
+        //}
 
         protected void onPostExecute(String result) {
             final ListView listView = (ListView) findViewById(R.id.list);
@@ -172,6 +174,8 @@ public class ParkingListActivity extends Activity {
                 jsonObject = new JSONObject(result);
                 JSONArray carParks = jsonObject.getJSONArray("carparks");
                 for(int i = 0; i < carParks.length(); i ++) {
+                    // creates new "location" and sets lat, lng
+                    // calculates the distance between the current location and destination
                     Location destination = new Location("Destination");
                     destination.setLatitude(carParks.getJSONObject(i).getDouble("lat"));
                     destination.setLongitude(carParks.getJSONObject(i).getDouble("lng"));
@@ -179,9 +183,8 @@ public class ParkingListActivity extends Activity {
                     carParks.getJSONObject(i).put("distance", String.valueOf(distance));
                     vals.add(carParks.get(i));
                 }
-
+                // sort the ArrayList based on the closest distance
                 Collections.sort(vals, new ParkingJSONObjComparator());
-
             }
             catch (JSONException e) {
                 e.printStackTrace();
@@ -189,9 +192,7 @@ public class ParkingListActivity extends Activity {
 
             parkingListArrayAdapter = new ParkingListArrayAdapter(ctx, vals);
             listView.setAdapter(parkingListArrayAdapter);
-
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1,
                                         int position, long arg3) {
@@ -207,12 +208,12 @@ public class ParkingListActivity extends Activity {
 
                         Intent intent = new Intent(ctx, MainActivity.class);
                         intent.putExtra("EXTRA_PARKING_ITEM", new ParkingItem(
-                                jsonObj.getInt("id"),
-                                jsonObj.getString("address"),
-                                jsonObj.getString("rate"),
-                                jsonObj.getDouble("lat"),
-                                jsonObj.getDouble("lng"),
-                                jsonObj.getDouble("distance")
+                            jsonObj.getInt("id"),
+                            jsonObj.getString("address"),
+                            jsonObj.getString("rate"),
+                            jsonObj.getDouble("lat"),
+                            jsonObj.getDouble("lng"),
+                            jsonObj.getDouble("distance")
 
                         ));
                         startActivity(intent);
